@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sleep Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #98bcd4;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.5)50%, rgba(0,0,0,0.5)50%), url(1.jpg);
+      background-position:  center;
+      background-size: cover;
+      color: #000000;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: rgb(219, 171, 171);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      margin: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="time"],
+    select {
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ffffff;
+      border-radius: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 14px;
+      background-color: #e799da;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #9e32be;
+    }
+
+    #results {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    #times-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #times-list li {
+      margin: 5px 0;
+      font-size: 20px;
+      color: #000000;
+    }
+
+    .details {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .details summary {
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .details p {
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      input[type="time"],
+      select,
+      button {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Sleep Calculator</h1>
+    <p>Enter your desired bedtime or wake-up time to calculate optimal sleep times.</p>
+    
+    <div class="input-group">
+      <label for="timezone">Select Time Zone:</label>
+      <select id="timezone">
+        <option value="0">UTC+0</option>
+        <option value="-5">UTC-5 (EST)</option>
+        <option value="-8">UTC-8 (PST)</option>
+        <option value="+1">UTC+1 (CET)</option>
+        <option value="+5.5">UTC+5.5 (IST)</option>
+        <option value="+8">UTC+8 (CST)</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label for="bedtime">I want to go to bed at:</label>
+      <input type="time" id="bedtime">
+      <button onclick="calculateWakeUpTimes()">Calculate Wake-Up Times</button>
+    </div>
+
+    <div class="input-group">
+      <label for="wakeup">I want to wake up at:</label>
+      <input type="time" id="wakeup">
+      <button onclick="calculateBedtimes()">Calculate Bedtimes</button>
+    </div>
+
+    <div id="results">
+      <h2>Optimal Times:</h2>
+      <ul id="times-list"></ul>
+    </div>
+
+    <div class="details">
+      <summary>What are Sleep Cycles?</summary>
+      <p>
+        Sleep cycles are periods of sleep that last about 90 minutes. Each cycle includes stages of light sleep, deep sleep, and REM sleep. Waking up at the end of a cycle helps you feel more rested and alert.
+      </p>
+    </div>
+
+    <div class="input-group">
+      <label for="reminder">Set a Reminder:</label>
+      <input type="time" id="reminder">
+      <button onclick="setReminder()">Set Reminder</button>
+    </div>
+  </div>
+
+  <script>
+    function calculateWakeUpTimes() {
+      const bedtimeInput = document.getElementById('bedtime').value;
+      const timezoneOffset = parseInt(document.getElementById('timezone').value, 10);
+
+      if (!bedtimeInput) {
+        alert('Please enter a bedtime.');
+        return;
+      }
+
+      const bedtime = new Date(`1970-01-01T${bedtimeInput}:00Z`);
+      bedtime.setHours(bedtime.getHours() - timezoneOffset);
+
+      const sleepCycles = [6, 7.5, 9]; // Sleep cycles in hours (6, 7.5, 9 hours)
+
+      const results = sleepCycles.map(cycle => {
+        const wakeUpTime = new Date(bedtime.getTime() + cycle * 60 * 60 * 1000);
+        wakeUpTime.setHours(wakeUpTime.getHours() + timezoneOffset);
+        return wakeUpTime.toTimeString().slice(0, 5);
+      });
+
+      displayResults(results);
+    }
+
+    function calculateBedtimes() {
+      const wakeupInput = document.getElementById('wakeup').value;
+      const timezoneOffset = parseInt(document.getElementById('timezone').value, 10);
+
+      if (!wakeupInput) {
+        alert('Please enter a wake-up time.');
+        return;
+      }
+
+      const wakeup = new Date(`1970-01-01T${wakeupInput}:00Z`);
+      wakeup.setHours(wakeup.getHours() - timezoneOffset);
+
+      const sleepCycles = [6, 7.5, 9]; // Sleep cycles in hours (6, 7.5, 9 hours)
+
+      const results = sleepCycles.map(cycle => {
+        const bedtime = new Date(wakeup.getTime() - cycle * 60 * 60 * 1000);
+        bedtime.setHours(bedtime.getHours() + timezoneOffset);
+        return bedtime.toTimeString().slice(0, 5);
+      });
+
+      displayResults(results);
+    }
+
+    function displayResults(times) {
+      const timesList = document.getElementById('times-list');
+      timesList.innerHTML = times.map(time => `<li>${time}</li>`).join('');
+    }
+
+    function setReminder() {
+      const reminderTime = document.getElementById('reminder').value;
+      if (!reminderTime) {
+        alert('Please enter a reminder time.');
+        return;
+      }
+
+      const now = new Date();
+      const reminder = new Date(`1970-01-01T${reminderTime}:00`);
+
+      const timeUntilReminder = reminder - now;
+      if (timeUntilReminder < 0) {
+        alert('Reminder time must be in the future.');
+        return;
+      }
+
+      setTimeout(() => {
+        alert('Time to sleep or wake up!');
+      }, timeUntilReminder);
+
+      alert('Reminder set successfully!');
+    }
+  </script>
+</body>
+</html>
