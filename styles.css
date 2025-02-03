@@ -14,10 +14,10 @@ body {
 }
 
 .container {
-    max-width: 500px;
+    max-width: 400px;
     width: 100%;
    align-content: center;
-    padding: 70px;
+    padding: 25px;
     background-color: #fae9e9;
     border-radius: 20px;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
